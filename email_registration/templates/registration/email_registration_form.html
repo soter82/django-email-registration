@@ -1,15 +1,23 @@
 {% load i18n towel_form_tags %}
-<form method="post" action="{% url "email_registration_form" %}" class="well" id="registration">
+<form method="post" style="font-size: 2em;" action="{% url "email_registration_form" %}" class="well" id="registration">
   {% csrf_token %}
-  {% form_errors form %}
+  {# {% form_errors form %}#}
+  <div class="box error cf">
+    Devi inserire un indirizzo email valido!
+  </div>
   <div class="controls">
     {% form_item_plain form.email %}
   </div>
-  <br>
-  <button type="submit" class="btn btn-primary">
-    {% trans "Register" %}</button>
+  <input type="submit" name="submit" class="form_submit" id="submit" value="REGISTRATI" />
   <style>
   #registration .form-errors span { display: none; }
-  #registration .form-errors ul { list-style: none; margin: 0; padding: 0; }
+  #registration .form-errors ul { list-style: none; margin: 0; padding: 0;}
+  #registration .box.error ul { display: none;}
+  #registration .box.error.cf {
+    font-size: 0.8em !important;
+    color: #f65821;
+    font-weight: normal !important;
+    margin-bottom: 20px;
+  }
   </style>
 </form>

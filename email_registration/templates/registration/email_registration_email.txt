@@ -1,11 +1,10 @@
 {% load i18n %}
-{% trans "Registration link" %}
+Conferma registrazione su TablesBOT
 
-{% trans "Click the following link to activate your account:" %}
+Grazie per esserti registrato su TablesBOT. Per completare il processo di registrazione, clicca sul link seguente:
 
 {{ url }}
 
-{% blocktrans %}Please note that this link expires after 3 days. If you wait
-longer, you'll have to request another registration link.{% endblocktrans %}
+Ricorda che questo link di registrazione ha una validità di 3 giorni, dopo i quali dovrai richiedere una nuova registrazione.
 
-{% trans "Best regards" %}
+Ci vediamo su TablesBOT!

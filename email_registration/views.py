@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import SetPasswordForm
 from django.db.models.fields import FieldDoesNotExist
 from django.shortcuts import redirect, render
@@ -21,12 +22,30 @@ else:
     USERNAME_FIELD = User.USERNAME_FIELD
 
 
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        required=True,
+        label=None,
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Nuova password',
+            'class': 'form_input required textinput textInput form-control',
+        }))
+    new_password2 = forms.CharField(
+        required=True,
+        label=None,
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Conferma nuova password',
+            'class': 'form_input required textinput textInput form-control',
+        }))
+
+
 class RegistrationForm(forms.Form):
     email = forms.EmailField(
         label=ugettext_lazy('email address'),
         max_length=75,
         widget=forms.TextInput(attrs={
             'placeholder': ugettext_lazy('email address'),
+            'class': 'form_input required textinput textInput form-control',
         }),
     )
 
@@ -58,7 +77,7 @@ def email_registration_form(request, form_class=RegistrationForm):
 
 
 def email_registration_confirm(request, code, max_age=3 * 86400,
-                               form_class=SetPasswordForm):
+                               form_class=CustomSetPasswordForm):
     try:
         email, user = decode(code, max_age=max_age)
     except InvalidCode as exc:
@@ -99,6 +118,7 @@ def email_registration_confirm(request, code, max_age=3 * 86400,
 
     if request.method == 'POST':
         form = form_class(user, request.POST)
+        username = user.username
         if form.is_valid():
             user = form.save()
 
@@ -112,7 +132,12 @@ def email_registration_confirm(request, code, max_age=3 * 86400,
             messages.success(request, _(
                 'Successfully set the new password. Please login now.'))
 
-            return redirect('login')
+            new_user = authenticate(
+                username=username,
+                password=form.cleaned_data['new_password1'],
+            )
+            login(request, new_user)
+            return redirect('register_2')
 
     else:
         messages.success(request, _('Please set a password.'))
